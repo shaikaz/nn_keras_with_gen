@@ -21,16 +21,17 @@ from Generator import Generator as Gen
 '''
 train_test_fraction = 0.8
 train_validation_fraction = 0.9
-number_of_epochs = 1
 delete_data_after_split = True
-L_R = 0.01 # lerning rate
 do_shuffle_on_data_when_split_train_test = True
-momentum_rate = 0.9
+
+number_of_epochs = 8
+L_R = 0.05 # lerning rate
+momentum_rate = 0.95
 data_on_ram = 6000
 last_activation_function = 'sigmoid' # activation for the last layer
 loss_function = 'binary_crossentropy'
 nsterov_update = True
-l1_reglazation = 0.0
+l1_reglazation = 0.0001
 l2_reglazation = 0.0
 do_shuffle_per_epoch = True
 batch_size = 1
