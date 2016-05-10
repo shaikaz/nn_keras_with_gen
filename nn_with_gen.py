@@ -23,6 +23,12 @@ train_test_fraction = 0.8
 train_validation_fraction = 0.9
 delete_data_after_split = True
 do_shuffle_on_data_when_split_train_test = True
+repeat_vec_dict_config = {
+    "do_repeat_vec": True, # If to repeat vector
+    "num_of_times_to_repeat": 10,
+    "on_this_field": 'Greengeeks_clicks',
+    "on_this_value": '1'
+    }
 
 number_of_epochs = 8
 L_R = 0.05 # lerning rate
@@ -67,7 +73,8 @@ sys.stdout = Logger(path + dir_data + "log_data.txt".format(d=datetime.datetime.
     Working on data
 '''
 data_dict, train_dict, test_dict = get_data_train_det_dict(train_test_fraction=train_test_fraction,
-                                                           do_shuffle_on_data_when_split_train_test=do_shuffle_on_data_when_split_train_test
+                                                           do_shuffle_on_data_when_split_train_test=do_shuffle_on_data_when_split_train_test,
+                                                           repeat_vec_dict_config=repeat_vec_dict_config
                                                            )
 print "Working on data..."
 
