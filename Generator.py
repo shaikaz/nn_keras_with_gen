@@ -20,6 +20,7 @@ class Generator():
         # else:
         #     self.generator = self.generator_func_for_batch_size_grater_then_1()
         self.generator = self.generator_func_for_batch_size_grater_then_1()
+        print 'itay'
 
     def generator_func_for_batch_size_1(self):
         while 1:
