@@ -4,6 +4,7 @@ from fields_config import categorial_fields, embbeding_fields, value_fields, sam
 '''
     Generator, Class witch fits a generator function given the requested arguments.
     There are 2 generators functions, depends on the batch_size the right generator function chosen.
+    Note: the generator function works in both cases of the batch_size
 '''
 #TODO repeat vector should be in the net, or should be given already as an input from here?
 
@@ -14,13 +15,9 @@ class Generator():
         self.shuffle_per_epoch = shuffle_per_epoch
         self.batch_size = batch_size
         self.voc_dict = voc_dict
-        # if self.batch_size == 1:
-        #     #self.generator = self.generator_func_for_batch_size_1()
-        #     self.generator = self.generator_func_for_batch_size_grater_then_1()
-        # else:
-        #     self.generator = self.generator_func_for_batch_size_grater_then_1()
         self.generator = self.generator_func_for_batch_size_grater_then_1()
 
+    # This generator function works, it suppose to be in spacial case when batch_size = 1, it's not necessary.
     def generator_func_for_batch_size_1(self):
         while 1:
             temp_index_arr = range(0, self.length_of_the_data)
