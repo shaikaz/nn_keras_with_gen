@@ -235,9 +235,9 @@ def make_submission(test_dict, length_of_test_data, fname = "keras.csv"):
         a.writerow(['id', 'predict_val', 'true_val'])
         for i in range(length_of_test_data):
             temp_id = test_dict['vt_id'][i]
-            temp_prob = model.predict_on_batch(generate_sample(test_dict, i))
+            temp_prob = np.float32(model.predict_on_batch(generate_sample(test_dict, i))[0][0])
             temp_tr_val = test_dict['Greengeeks_clicks'][i]
-            temp = [str(temp_id), str(temp_prob[0][0]), str(temp_tr_val)]
+            temp = [str(temp_id), temp_prob, str(temp_tr_val)]
             a.writerow(temp)
     print ('Wrote submission to file {}.'.format(fname))
 
