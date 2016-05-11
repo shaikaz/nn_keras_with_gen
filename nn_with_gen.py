@@ -7,7 +7,7 @@ import sys
 from keras.models import Model
 from keras.layers import Dense, Dropout, merge, Input
 import os
-from keras.optimizers import SGD
+from keras.optimizers import SGD, RMSprop
 import datetime
 from keras.utils.visualize_util import plot
 from keras.regularizers import l1l2
@@ -36,6 +36,7 @@ momentum_rate = 0.9
 data_on_ram = 8000
 last_activation_function = 'sigmoid' # activation for the last layer
 loss_function = 'binary_crossentropy'
+optimizer_method = "rmsprop" # options: "rmsprop", "sgd" ___ this is the updating alg
 nsterov_update = True
 l1_reglazation = 0.00001
 l2_reglazation = 0.0
@@ -170,19 +171,24 @@ output = Dense(1,
                 activation= last_activation_function,
                 name="output"
             )(L_3)
+if optimizer_method == "sgd":
+    optimizer = SGD(lr=L_R,
+              decay=1e-6,
+              momentum=momentum_rate,
+              nesterov=nsterov_update)
 
-sgd = SGD(lr=L_R,
-          decay=1e-6,
-          momentum=momentum_rate,
-          nesterov=nsterov_update
-          )
+if optimizer_method == "rmsprop":
+    optimizer = RMSprop(lr=L_R,
+                        rho=0.9,
+                        epsilon=1e-06)
+
 
 model = Model(input = [globals()["input_{F}".format(F=field)] for field in sample_len_data_dict],
                 output = output
               )
 
 model.compile(loss=loss_function,
-              optimizer=sgd)
+              optimizer=optimizer)
 
 plot(model, to_file=path + dir_data + 'model.png', show_shapes=True)
 
