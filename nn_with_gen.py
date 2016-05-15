@@ -30,8 +30,8 @@ repeat_vec_dict_config = {
     "on_this_value": '1'
     }
 
-number_of_epochs = 20
-L_R = 0.01 # lerning rate
+number_of_epochs = 1
+L_R = 0.001 # lerning rate
 momentum_rate = 0.9
 data_on_ram = 8000
 last_activation_function = 'sigmoid' # activation for the last layer
@@ -41,7 +41,7 @@ nsterov_update = True
 l1_reglazation = 0.00001
 l2_reglazation = 0.0
 do_shuffle_per_epoch = True
-batch_size = 1
+batch_size = 70
 batch_size_for_evaluate = 1
 
 dir_data='data_{D}'.format(D=str(datetime.datetime.now())[:10])
