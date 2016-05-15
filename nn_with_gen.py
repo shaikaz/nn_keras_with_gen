@@ -7,7 +7,7 @@ import sys
 from keras.models import Model
 from keras.layers import Dense, Dropout, merge, Input
 import os
-from keras.optimizers import SGD, RMSprop
+from keras.optimizers import SGD, RMSprop, Adagrad, Adadelta, Adam, Adamax
 import datetime
 from keras.utils.visualize_util import plot
 from keras.regularizers import l1l2
@@ -31,13 +31,16 @@ repeat_vec_dict_config = {
     }
 
 number_of_epochs = 1
-L_R = 0.001 # lerning rate
-momentum_rate = 0.9
 data_on_ram = 8000
 last_activation_function = 'sigmoid' # activation for the last layer
 loss_function = 'binary_crossentropy'
-optimizer_method = "rmsprop" # options: "rmsprop", "sgd" ___ this is the updating alg
-nsterov_update = True
+optimizer_method = ["sgd", 0.001, 0.9, 1e-06, True] # [name_of_update_alg, lr(recomended:0.001), momentum(recommended:0.9), decay(recommended:1e-06), nesteruv(recommended:True)]
+optimizer_method = ["rmsprop", 0.001, 0.9, 1e-06] # [name_of_update_alg, lr(recomended:0.001), rho(recommended:0.9), epsilon(recommended:1e-06)]
+optimizer_method = ["adagrad", 0.01, 1e-06] # [name_of_update_alg, lr(recomended:0.01), epsilon(recommended:1e-6)]
+optimizer_method = ["adadelta", 1.0, 0.95, 1e-06] # [name_of_update_alg, lr(recomended:1.0), rho(recommended:0.95), epsilon(recommended:1e-06)]
+optimizer_method = ["adam", 0.001, 0.9, 0.999, 1e-08] # [name_of_update_alg, lr(recomended:0.001), beta_1(recommended:0.9), beta_2(recomanded:0.999) epsilon(recommended:1e-08)]
+optimizer_method = ["adamax", 0.002, 0.9, 0.999, 1e-08] # [name_of_update_alg, lr(recomended:0.002), beta_1(recommended:0.9), beta_2(recomanded:0.999) epsilon(recommended:1e-08)]
+
 l1_reglazation = 0.00001
 l2_reglazation = 0.0
 do_shuffle_per_epoch = True
@@ -171,21 +174,44 @@ output = Dense(1,
                 activation= last_activation_function,
                 name="output"
             )(L_3)
-if optimizer_method == "sgd":
-    optimizer = SGD(lr=L_R,
-              decay=1e-6,
-              momentum=momentum_rate,
-              nesterov=nsterov_update)
 
-if optimizer_method == "rmsprop":
-    optimizer = RMSprop(lr=L_R,
-                        rho=0.9,
-                        epsilon=1e-06)
+if optimizer_method[0] == "sgd":
+    optimizer = SGD(lr=optimizer_method[1],
+              decay=optimizer_method[2],
+              momentum=optimizer_method[3],
+              nesterov=optimizer_method[4])
+
+if optimizer_method[0] == "rmsprop":
+    optimizer = RMSprop(lr=optimizer_method[1],
+                        rho=optimizer_method[2],
+                        epsilon=optimizer_method[3])
+
+if optimizer_method[0] == "adagrad":
+    optimizer = Adagrad(lr=optimizer_method[1],
+                        epsilon=optimizer_method[2])
+
+if optimizer_method[0] == "adadelta":
+    optimizer = Adadelta(lr=optimizer_method[1],
+                         rho=optimizer_method[2],
+                         epsilon=optimizer_method[3])
+
+if optimizer_method[0] == "adam":
+    optimizer = Adam(lr=optimizer_method[1],
+                     beta_1=optimizer_method[2],
+                     beta_2=optimizer_method[3],
+                     epsilon=optimizer_method[4])
+
+if optimizer_method[0] == "adamax":
+    optimizer = Adamax(lr=optimizer_method[1],
+                     beta_1=optimizer_method[2],
+                     beta_2=optimizer_method[3],
+                     epsilon=optimizer_method[4])
+
+
 
 
 model = Model(input = [globals()["input_{F}".format(F=field)] for field in sample_len_data_dict],
-                output = output
-              )
+                output = output)
 
 model.compile(loss=loss_function,
               optimizer=optimizer)
