@@ -78,6 +78,8 @@ sys.stdout = Logger(path + dir_data + "log_data.txt".format(d=datetime.datetime.
 '''
     Printing hyper parameters config
 '''
+print ""
+print "Net config for this run..."
 print "num of epochs:", number_of_epochs
 print "train/test fraction:", train_test_fraction
 print "do shuffle on data per epoch:", do_shuffle_per_epoch
@@ -95,6 +97,7 @@ data_dict, train_dict, test_dict = get_data_train_det_dict(train_test_fraction=t
                                                            do_shuffle_on_data_when_split_train_test=do_shuffle_on_data_when_split_train_test,
                                                            repeat_vec_dict_config=repeat_vec_dict_config
                                                            )
+print ""
 print "Working on data..."
 
 class token(TE.Tokenizer):
