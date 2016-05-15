@@ -25,7 +25,7 @@ delete_data_after_split = True
 do_shuffle_on_data_when_split_train_test = True
 repeat_vec_dict_config = {
     "do_repeat_vec": True, # If to repeat vector
-    "num_of_times_to_repeat": 20,
+    "num_of_times_to_repeat": 15,
     "on_this_field": 'Greengeeks_clicks',
     "on_this_value": '1'
     }
@@ -38,8 +38,8 @@ loss_function = 'binary_crossentropy'
 # need to chose only one of the following updating method, 5 of them should be in comment
 #optimizer_method = ["sgd", 0.001, 0.9, 1e-06, True] # [name_of_update_alg, lr(recomended:0.001), momentum(recommended:0.9), decay(recommended:1e-06), nesteruv(recommended:True)]
 #optimizer_method = ["rmsprop", 0.001, 0.9, 1e-06] # [name_of_update_alg, lr(recomended:0.001), rho(recommended:0.9), epsilon(recommended:1e-06)]
-#optimizer_method = ["adagrad", 0.01, 1e-06] # [name_of_update_alg, lr(recomended:0.01), epsilon(recommended:1e-6)]
-optimizer_method = ["adadelta", 1.0, 0.95, 1e-06] # [name_of_update_alg, lr(recomended:1.0), rho(recommended:0.95), epsilon(recommended:1e-06)]
+optimizer_method = ["adagrad", 0.01, 1e-06] # [name_of_update_alg, lr(recomended:0.01), epsilon(recommended:1e-6)]
+#optimizer_method = ["adadelta", 1.0, 0.95, 1e-06] # [name_of_update_alg, lr(recomended:1.0), rho(recommended:0.95), epsilon(recommended:1e-06)]
 #optimizer_method = ["adam", 0.001, 0.9, 0.999, 1e-08] # [name_of_update_alg, lr(recomended:0.001), beta_1(recommended:0.9), beta_2(recomanded:0.999) epsilon(recommended:1e-08)]
 #optimizer_method = ["adamax", 0.002, 0.9, 0.999, 1e-08] # [name_of_update_alg, lr(recomended:0.002), beta_1(recommended:0.9), beta_2(recomanded:0.999) epsilon(recommended:1e-08)]
 
@@ -74,6 +74,19 @@ while create_dir:
 path = os.path.dirname(os.path.abspath(__file__)) +'/'
 # Creating log file
 sys.stdout = Logger(path + dir_data + "log_data.txt".format(d=datetime.datetime.now()))
+
+'''
+    Printing hyper parameters config
+'''
+print "num of epochs:", number_of_epochs
+print "train/test fraction:", train_test_fraction
+print "do shuffle on data per epoch:", do_shuffle_per_epoch
+print "optimize method config:", optimizer_method
+print "l1 regularization:", l1_reglazation
+print "l2 regularization:", l2_reglazation
+print "batch size:", batch_size
+print "repeat vector config:", repeat_vec_dict_config
+print "loss function:", loss_function
 
 '''
     Working on data
@@ -220,7 +233,6 @@ model.compile(loss=loss_function,
 
 plot(model, to_file=path + dir_data + 'model.png', show_shapes=True)
 
-print model.summary()
 for f in model.get_config():
     print f
 '''
@@ -269,7 +281,8 @@ def make_submission(test_dict, length_of_test_data, fname = "keras.csv"):
         a.writerow(['id', 'predict_val', 'true_val'])
         for i in range(length_of_test_data):
             temp_id = test_dict['vt_id'][i]
-            temp_prob = np.float32(model.predict_on_batch(generate_sample(test_dict, i))[0][0])
+            #temp_prob = np.float32(model.predict_on_batch(generate_sample(test_dict, i))[0][0])
+            temp_prob = np.float32(model.predict(generate_sample(test_dict, i), batch_size=1, verbose=1))
             temp_tr_val = test_dict['Greengeeks_clicks'][i]
             temp = [str(temp_id), temp_prob, str(temp_tr_val)]
             a.writerow(temp)
