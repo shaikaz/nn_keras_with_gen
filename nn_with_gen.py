@@ -7,7 +7,7 @@ import sys
 from keras.models import Model
 from keras.layers import Dense, Dropout, merge, Input
 import os
-from keras.optimizers import SGD
+from keras.optimizers import SGD, RMSprop
 import datetime
 from keras.utils.visualize_util import plot
 from keras.regularizers import l1l2
@@ -21,19 +21,27 @@ from Generator import Generator as Gen
 '''
 train_test_fraction = 0.8
 train_validation_fraction = 0.9
-number_of_epochs = 1
 delete_data_after_split = True
-L_R = 0.01 # lerning rate
 do_shuffle_on_data_when_split_train_test = True
+repeat_vec_dict_config = {
+    "do_repeat_vec": True, # If to repeat vector
+    "num_of_times_to_repeat": 10,
+    "on_this_field": 'Greengeeks_clicks',
+    "on_this_value": '1'
+    }
+
+number_of_epochs = 1
+L_R = 0.001 # lerning rate
 momentum_rate = 0.9
-data_on_ram = 6000
+data_on_ram = 8000
 last_activation_function = 'sigmoid' # activation for the last layer
 loss_function = 'binary_crossentropy'
+optimizer_method = "rmsprop" # options: "rmsprop", "sgd" ___ this is the updating alg
 nsterov_update = True
-l1_reglazation = 0.0
+l1_reglazation = 0.00001
 l2_reglazation = 0.0
 do_shuffle_per_epoch = True
-batch_size = 1
+batch_size = 70
 batch_size_for_evaluate = 1
 
 dir_data='data_{D}'.format(D=str(datetime.datetime.now())[:10])
@@ -66,7 +74,8 @@ sys.stdout = Logger(path + dir_data + "log_data.txt".format(d=datetime.datetime.
     Working on data
 '''
 data_dict, train_dict, test_dict = get_data_train_det_dict(train_test_fraction=train_test_fraction,
-                                                           do_shuffle_on_data_when_split_train_test=do_shuffle_on_data_when_split_train_test
+                                                           do_shuffle_on_data_when_split_train_test=do_shuffle_on_data_when_split_train_test,
+                                                           repeat_vec_dict_config=repeat_vec_dict_config
                                                            )
 print "Working on data..."
 
@@ -162,19 +171,24 @@ output = Dense(1,
                 activation= last_activation_function,
                 name="output"
             )(L_3)
+if optimizer_method == "sgd":
+    optimizer = SGD(lr=L_R,
+              decay=1e-6,
+              momentum=momentum_rate,
+              nesterov=nsterov_update)
 
-sgd = SGD(lr=L_R,
-          decay=1e-6,
-          momentum=momentum_rate,
-          nesterov=nsterov_update
-          )
+if optimizer_method == "rmsprop":
+    optimizer = RMSprop(lr=L_R,
+                        rho=0.9,
+                        epsilon=1e-06)
+
 
 model = Model(input = [globals()["input_{F}".format(F=field)] for field in sample_len_data_dict],
                 output = output
               )
 
 model.compile(loss=loss_function,
-              optimizer=sgd)
+              optimizer=optimizer)
 
 plot(model, to_file=path + dir_data + 'model.png', show_shapes=True)
 
@@ -227,9 +241,9 @@ def make_submission(test_dict, length_of_test_data, fname = "keras.csv"):
         a.writerow(['id', 'predict_val', 'true_val'])
         for i in range(length_of_test_data):
             temp_id = test_dict['vt_id'][i]
-            temp_prob = model.predict_on_batch(generate_sample(test_dict, i))
+            temp_prob = np.float32(model.predict_on_batch(generate_sample(test_dict, i))[0][0])
             temp_tr_val = test_dict['Greengeeks_clicks'][i]
-            temp = [str(temp_id), str(temp_prob[0][0]), str(temp_tr_val)]
+            temp = [str(temp_id), temp_prob, str(temp_tr_val)]
             a.writerow(temp)
     print ('Wrote submission to file {}.'.format(fname))
 

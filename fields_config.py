@@ -1,6 +1,7 @@
 import os
 import csv
 import numpy as np
+import random
 
 '''
     Date configuration, here all the fields should categorized.
@@ -142,7 +143,7 @@ def split_data(data_dict, split_fraction = 0.8, shuffle = True):
 
     return train_dict, test_dict
 
-def get_data_train_det_dict(train_test_fraction = 0.8, do_shuffle_on_data_when_split_train_test = True):
+def get_data_train_det_dict(train_test_fraction = 0.8, do_shuffle_on_data_when_split_train_test = True, repeat_vec_dict_config = {}):
     with open(path + 'good_data_final.csv', 'r') as f:
         data_temp = csv.reader(f)
         data = []
@@ -169,6 +170,28 @@ def get_data_train_det_dict(train_test_fraction = 0.8, do_shuffle_on_data_when_s
 
         del data
         train_dict, test_dict = split_data(data_dict, split_fraction=train_test_fraction, shuffle=do_shuffle_on_data_when_split_train_test)
+        if repeat_vec_dict_config["do_repeat_vec"]:
+            train_dict = repeat_vector_in_data(train_dict,
+                                               repeat_vec_dict_config["num_of_times_to_repeat"],
+                                               repeat_vec_dict_config["on_this_field"],
+                                               repeat_vec_dict_config["on_this_value"])
     return data_dict, train_dict, test_dict
 
-#def
+def repeat_vector_in_data(train_dict, num_of_time_to_repeat, by_this_field_name, desired_value):
+    special_vectors_dict = {}
+    for f in train_dict:
+        special_vectors_dict[f] = []
+
+    for i in range(len(train_dict[by_this_field_name])):
+        if train_dict[by_this_field_name][i] == desired_value:
+            for j in range(num_of_time_to_repeat):
+                for f in train_dict:
+                    special_vectors_dict[f].append(train_dict[f][i])
+
+    for i in range(len(special_vectors_dict[by_this_field_name])):
+        temp_index = random.randint(0, len(train_dict[by_this_field_name]) - 1)
+        for f in train_dict:
+            train_dict[f].insert(temp_index, special_vectors_dict[f][i])
+
+    return train_dict
+
