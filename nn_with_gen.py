@@ -25,12 +25,12 @@ delete_data_after_split = True
 do_shuffle_on_data_when_split_train_test = True
 repeat_vec_dict_config = {
     "do_repeat_vec": True, # If to repeat vector
-    "num_of_times_to_repeat": 10,
+    "num_of_times_to_repeat": 20,
     "on_this_field": 'Greengeeks_clicks',
     "on_this_value": '1'
     }
 
-number_of_epochs = 1
+number_of_epochs = 8
 data_on_ram = 8000
 last_activation_function = 'sigmoid' # activation for the last layer
 loss_function = 'binary_crossentropy'
@@ -46,7 +46,7 @@ optimizer_method = ["adadelta", 1.0, 0.95, 1e-06] # [name_of_update_alg, lr(reco
 l1_reglazation = 0.00001
 l2_reglazation = 0.0
 do_shuffle_per_epoch = True
-batch_size = 70
+batch_size = 10
 batch_size_for_evaluate = 1
 
 dir_data='data_{D}'.format(D=str(datetime.datetime.now())[:10])
