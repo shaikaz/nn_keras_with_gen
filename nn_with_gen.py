@@ -12,6 +12,7 @@ import datetime
 from keras.utils.visualize_util import plot
 from keras.regularizers import l1l2
 import csv
+from keras import backend as K
 
 from fields_config import categorial_fields, embbeding_fields, value_fields, sample_len_data_dict, \
     value_field_voc, validation_of_samples_length, get_data_train_det_dict, cat_field_voc
@@ -25,12 +26,12 @@ delete_data_after_split = True
 do_shuffle_on_data_when_split_train_test = True
 repeat_vec_dict_config = {
     "do_repeat_vec": True, # If to repeat vector
-    "num_of_times_to_repeat": 15,
+    "num_of_times_to_repeat": 3,
     "on_this_field": 'Greengeeks_clicks',
     "on_this_value": '1'
     }
 
-number_of_epochs = 8
+number_of_epochs = 1
 data_on_ram = 8000
 last_activation_function = 'sigmoid' # activation for the last layer
 loss_function = 'binary_crossentropy'
@@ -38,15 +39,15 @@ loss_function = 'binary_crossentropy'
 # need to chose only one of the following updating method, 5 of them should be in comment
 #optimizer_method = ["sgd", 0.001, 0.9, 1e-06, True] # [name_of_update_alg, lr(recomended:0.001), momentum(recommended:0.9), decay(recommended:1e-06), nesteruv(recommended:True)]
 #optimizer_method = ["rmsprop", 0.001, 0.9, 1e-06] # [name_of_update_alg, lr(recomended:0.001), rho(recommended:0.9), epsilon(recommended:1e-06)]
-optimizer_method = ["adagrad", 0.01, 1e-06] # [name_of_update_alg, lr(recomended:0.01), epsilon(recommended:1e-6)]
+#optimizer_method = ["adagrad", 0.01, 1e-06] # [name_of_update_alg, lr(recomended:0.01), epsilon(recommended:1e-6)]
 #optimizer_method = ["adadelta", 1.0, 0.95, 1e-06] # [name_of_update_alg, lr(recomended:1.0), rho(recommended:0.95), epsilon(recommended:1e-06)]
 #optimizer_method = ["adam", 0.001, 0.9, 0.999, 1e-08] # [name_of_update_alg, lr(recomended:0.001), beta_1(recommended:0.9), beta_2(recomanded:0.999) epsilon(recommended:1e-08)]
-#optimizer_method = ["adamax", 0.002, 0.9, 0.999, 1e-08] # [name_of_update_alg, lr(recomended:0.002), beta_1(recommended:0.9), beta_2(recomanded:0.999) epsilon(recommended:1e-08)]
+optimizer_method = ["adamax", 0.002, 0.9, 0.999, 1e-08] # [name_of_update_alg, lr(recomended:0.002), beta_1(recommended:0.9), beta_2(recomanded:0.999) epsilon(recommended:1e-08)]
 
-l1_reglazation = 0.00001
+l1_reglazation = 0.0000001
 l2_reglazation = 0.0
 do_shuffle_per_epoch = True
-batch_size = 10
+batch_size = 50
 batch_size_for_evaluate = 1
 
 dir_data='data_{D}'.format(D=str(datetime.datetime.now())[:10])
@@ -262,8 +263,8 @@ score = model.evaluate_generator(
                        max_q_size=data_on_ram
                        )
 
-print "The score is:"
-print score
+print "The score is:", score[0]
+print "The accuracy is:", score[1]
 
 print ""
 print('Generating submission...')
@@ -279,6 +280,7 @@ def generate_sample(data_dict, index):
             temp_batch_sample["input_{F}".format(F=field)] = temp_arr_sample
     return temp_batch_sample
 
+prob = K.function([modelinput, K.learning_phase()], [model.output])
 def make_submission(test_dict, length_of_test_data, fname = "keras.csv"):
     with open(fname, 'wb') as f:
         a = csv.writer(f, delimiter=',')
@@ -286,7 +288,8 @@ def make_submission(test_dict, length_of_test_data, fname = "keras.csv"):
         for i in range(length_of_test_data):
             temp_id = test_dict['vt_id'][i]
             #temp_prob = np.float32(model.predict_on_batch(generate_sample(test_dict, i))[0][0])
-            temp_prob = np.float32(model.predict(generate_sample(test_dict, i), batch_size=1, verbose=0)[0][0])
+            #temp_prob = np.float32(model.predict(generate_sample(test_dict, i), batch_size=1, verbose=0)[0])
+            temp_prob = prob([generate_sample(test_dict, i), 0])
             temp_tr_val = test_dict['Greengeeks_clicks'][i]
             temp = [str(temp_id), temp_prob, str(temp_tr_val)]
             a.writerow(temp)
