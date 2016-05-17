@@ -26,15 +26,15 @@ delete_data_after_split = True
 do_shuffle_on_data_when_split_train_test = True
 repeat_vec_dict_config = {
     "do_repeat_vec": True, # If to repeat vector
-    "num_of_times_to_repeat": 5,
+    "num_of_times_to_repeat": 8,
     "on_this_field": 'Greengeeks_clicks',
     "on_this_value": '1'
     }
 
-number_of_epochs = 15
+number_of_epochs = 30
 data_on_ram = 10000
 last_activation_function = 'sigmoid' # activation for the last layer
-loss_function = 'msle' # options: 'mse', 'binary_crossentropy' , 'msle', 'mean_absolute_percentage_error'
+loss_function = 'binary_crossentropy' # options: 'mse', 'binary_crossentropy' , 'msle', 'mean_absolute_percentage_error'
 
 # need to chose only one of the following updating method, 5 of them should be in comment
 #optimizer_method = ["sgd", 0.001, 0.9, 1e-06, True] # [name_of_update_alg, lr(recomended:0.001), momentum(recommended:0.9), decay(recommended:1e-06), nesteruv(recommended:True)]
