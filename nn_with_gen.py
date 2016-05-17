@@ -26,15 +26,15 @@ delete_data_after_split = True
 do_shuffle_on_data_when_split_train_test = True
 repeat_vec_dict_config = {
     "do_repeat_vec": True, # If to repeat vector
-    "num_of_times_to_repeat": 3,
+    "num_of_times_to_repeat": 5,
     "on_this_field": 'Greengeeks_clicks',
     "on_this_value": '1'
     }
 
-number_of_epochs = 1
-data_on_ram = 8000
+number_of_epochs = 15
+data_on_ram = 10000
 last_activation_function = 'sigmoid' # activation for the last layer
-loss_function = 'binary_crossentropy'
+loss_function = 'mse' #'binary_crossentropy'
 
 # need to chose only one of the following updating method, 5 of them should be in comment
 #optimizer_method = ["sgd", 0.001, 0.9, 1e-06, True] # [name_of_update_alg, lr(recomended:0.001), momentum(recommended:0.9), decay(recommended:1e-06), nesteruv(recommended:True)]
@@ -42,12 +42,12 @@ loss_function = 'binary_crossentropy'
 #optimizer_method = ["adagrad", 0.01, 1e-06] # [name_of_update_alg, lr(recomended:0.01), epsilon(recommended:1e-6)]
 #optimizer_method = ["adadelta", 1.0, 0.95, 1e-06] # [name_of_update_alg, lr(recomended:1.0), rho(recommended:0.95), epsilon(recommended:1e-06)]
 #optimizer_method = ["adam", 0.001, 0.9, 0.999, 1e-08] # [name_of_update_alg, lr(recomended:0.001), beta_1(recommended:0.9), beta_2(recomanded:0.999) epsilon(recommended:1e-08)]
-optimizer_method = ["adamax", 0.002, 0.9, 0.999, 1e-08] # [name_of_update_alg, lr(recomended:0.002), beta_1(recommended:0.9), beta_2(recomanded:0.999) epsilon(recommended:1e-08)]
+optimizer_method = ["adamax", 0.001, 0.9, 0.999, 1e-08] # [name_of_update_alg, lr(recomended:0.002), beta_1(recommended:0.9), beta_2(recomanded:0.999) epsilon(recommended:1e-08)]
 
 l1_reglazation = 0.0000001
 l2_reglazation = 0.0
 do_shuffle_per_epoch = True
-batch_size = 50
+batch_size = 6
 batch_size_for_evaluate = 1
 
 dir_data='data_{D}'.format(D=str(datetime.datetime.now())[:10])
@@ -238,9 +238,7 @@ model.compile(loss=loss_function,
 
 plot(model, to_file=path + dir_data + 'model.png', show_shapes=True)
 
-for f in model.get_config():
-    for f_ in f:
-        print f_
+print  model.get_config()
 
 '''
     Start training the model
