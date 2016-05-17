@@ -34,7 +34,7 @@ repeat_vec_dict_config = {
 number_of_epochs = 15
 data_on_ram = 10000
 last_activation_function = 'sigmoid' # activation for the last layer
-loss_function = 'mse' #'binary_crossentropy'
+loss_function = 'msle' # options: 'mse', 'binary_crossentropy' , 'msle', 'mean_absolute_percentage_error'
 
 # need to chose only one of the following updating method, 5 of them should be in comment
 #optimizer_method = ["sgd", 0.001, 0.9, 1e-06, True] # [name_of_update_alg, lr(recomended:0.001), momentum(recommended:0.9), decay(recommended:1e-06), nesteruv(recommended:True)]
