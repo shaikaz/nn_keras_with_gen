@@ -31,7 +31,7 @@ repeat_vec_dict_config = {
     "on_this_value": '1'
     }
 
-number_of_epochs = 30
+number_of_epochs = 15
 data_on_ram = 10000
 last_activation_function = 'sigmoid' # activation for the last layer
 loss_function = 'binary_crossentropy' # options: 'mse', 'binary_crossentropy' , 'msle', 'mean_absolute_percentage_error'
@@ -47,7 +47,7 @@ optimizer_method = ["adamax", 0.001, 0.9, 0.999, 1e-08] # [name_of_update_alg, l
 l1_reglazation = 0.0000001
 l2_reglazation = 0.0
 do_shuffle_per_epoch = True
-batch_size = 6
+batch_size = 8
 batch_size_for_evaluate = 1
 
 dir_data='data_{D}'.format(D=str(datetime.datetime.now())[:10])
@@ -288,7 +288,7 @@ def make_submission(test_dict, length_of_test_data, fname = "keras.csv"):
         for i in range(length_of_test_data):
             temp_id = test_dict['vt_id'][i]
             #temp_prob = np.float32(model.predict_on_batch(generate_sample(test_dict, i))[0][0])
-            temp_prob = np.float32(model.predict(generate_sample(test_dict, i), batch_size=1, verbose=0)[0][0])
+            temp_prob = np.float64(model.predict(generate_sample(test_dict, i), batch_size=1, verbose=0)[0][0])
             #temp_prob = prob([generate_sample(test_dict, i)])
             temp_tr_val = test_dict['Greengeeks_clicks'][i]
             temp = [str(temp_id), temp_prob, str(temp_tr_val)]
