@@ -47,7 +47,7 @@ optimizer_method = ["adamax", 0.001, 0.9, 0.999, 1e-08] # [name_of_update_alg, l
 l1_reglazation = 0.0000001
 l2_reglazation = 0.0
 do_shuffle_per_epoch = True
-batch_size = 8
+batch_size = 2
 batch_size_for_evaluate = 1
 
 dir_data='data_{D}'.format(D=str(datetime.datetime.now())[:10])
