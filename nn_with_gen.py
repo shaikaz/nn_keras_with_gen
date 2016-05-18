@@ -280,16 +280,13 @@ def generate_sample(data_dict, index):
             temp_batch_sample["input_{F}".format(F=field)] = temp_arr_sample
     return temp_batch_sample
 
-#prob = K.function([model.input], [model.output])
 def make_submission(test_dict, length_of_test_data, fname = "keras.csv"):
     with open(fname, 'wb') as f:
         a = csv.writer(f, delimiter=',')
         a.writerow(['id', 'predict_val', 'true_val'])
         for i in range(length_of_test_data):
             temp_id = test_dict['vt_id'][i]
-            #temp_prob = np.float32(model.predict_on_batch(generate_sample(test_dict, i))[0][0])
             temp_prob = np.float64(model.predict(generate_sample(test_dict, i), batch_size=1, verbose=0)[0][0])
-            #temp_prob = prob([generate_sample(test_dict, i)])
             temp_tr_val = test_dict['Greengeeks_clicks'][i]
             temp = [str(temp_id), temp_prob, str(temp_tr_val)]
             a.writerow(temp)
